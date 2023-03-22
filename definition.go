@@ -5,7 +5,7 @@ type Tree struct {
 }
 
 type node struct {
-	value    rune
-	sons     map[rune]*node
-	priority float64
+	value rune
+	sons  map[rune]*node
+	//priority float64
 }

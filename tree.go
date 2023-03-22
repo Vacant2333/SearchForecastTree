@@ -2,7 +2,7 @@ package SearchForecastTree
 
 func NewTree(sentences *[]string) *Tree {
 	t := &Tree{
-		root: newNode(0, 0),
+		root: newNode(0),
 	}
 	if sentences != nil {
 		// insert default sentences
@@ -13,11 +13,10 @@ func NewTree(sentences *[]string) *Tree {
 	return t
 }
 
-func newNode(value rune, priority float64) *node {
+func newNode(value rune) *node {
 	return &node{
-		value:    value,
-		sons:     make(map[rune]*node),
-		priority: priority,
+		value: value,
+		sons:  make(map[rune]*node),
 	}
 }
 
@@ -25,8 +24,10 @@ func (t *Tree) Insert(sentence string) {
 	cur := t.root
 	for _, c := range sentence {
 		if !cur.hasSon(c) {
-
+			cur.sons[c] = newNode(c)
 		}
+		// move to next
+		cur = cur.sons[c]
 	}
 }
 
