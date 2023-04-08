@@ -6,7 +6,7 @@ import (
 )
 
 func TestNewTree(t *testing.T) {
-	sentences := &[]string{
+	sentences := []string{
 		"abo",
 		"abd",
 		"ab,s",
@@ -14,6 +14,18 @@ func TestNewTree(t *testing.T) {
 	}
 	tree := NewTree(sentences)
 	printTree(tree)
+}
+
+func TestTree_Search(t *testing.T) {
+	sentences := []string{
+		"abo",
+		"abc",
+		"ab",
+		"aaa",
+		"ac",
+	}
+	tree := NewTree(sentences)
+	fmt.Println(tree.Search("ab"))
 }
 
 func printTree(t *Tree) {
