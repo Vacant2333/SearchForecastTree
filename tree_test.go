@@ -1,57 +1,87 @@
 package SearchForecastTree
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestNewTree(t *testing.T) {
-	sentences := []string{
-		"abo",
-		"abd",
-		"ab,s",
-		"cbd",
+	// Test case 1: Empty input
+	tree1 := NewTree(nil)
+	if tree1 == nil || tree1.root == nil {
+		t.Error("NewTree should return a tree with root initialized")
 	}
-	tree := NewTree(sentences)
-	printTree(tree)
-}
 
-func TestTree_Search(t *testing.T) {
-	sentences := []string{
-		"abo",
-		"abc",
-		"ab",
-		"aaa",
-		"ac",
+	// Test case 2: Non-empty input
+	testSentences := []string{"hello", "world", "search", "tree"}
+	tree2 := NewTree(testSentences)
+
+	// Check if tree2 is not nil
+	if tree2 == nil || tree2.root == nil {
+		t.Error("NewTree should return a tree with root initialized")
 	}
-	tree := NewTree(sentences)
-	fmt.Println(tree.Search("ab"))
-}
 
-func printTree(t *Tree) {
-	printNode(t.root)
-}
+	// Check if tree2 contains the given sentences
+	for _, sentence := range testSentences {
+		cur := tree2.matchForCur(sentence)
+		if cur == nil {
+			t.Errorf("NewTree should insert the given sentences into the tree: %s not found", sentence)
+		}
+	}
 
-func printNode(n *node) {
-	sons := getNodeSonsName(n)
-	fmt.Printf("Node:[%c] Count:[%v] Sons:[%v]\n", n.value, len(sons), string(sons))
-	for _, son := range getNodeSons(n) {
-		printNode(son)
+	// Test case 3: Check for non-existing sentence
+	nonExistingSentence := "notfound"
+	cur := tree2.matchForCur(nonExistingSentence)
+	if cur != nil {
+		t.Errorf("NewTree should not contain the non-existing sentence: %s", nonExistingSentence)
 	}
 }
 
-func getNodeSons(n *node) []*node {
-	sons := make([]*node, 0)
-	for _, son := range n.sons {
-		sons = append(sons, son)
+func TestSearch(t *testing.T) {
+	testCases := []struct {
+		name        string
+		sentences   []string
+		prefix      string
+		expectedRes []string
+	}{
+		{
+			name:        "Search with empty tree",
+			sentences:   []string{},
+			prefix:      "",
+			expectedRes: nil,
+		},
+		{
+			name:        "Search with existing prefix",
+			sentences:   []string{"hello", "world", "search", "tree"},
+			prefix:      "t",
+			expectedRes: []string{"tree"},
+		},
+		{
+			name:        "Search with non-existing prefix",
+			sentences:   []string{"hello", "world", "search", "tree"},
+			prefix:      "notfound",
+			expectedRes: nil,
+		},
+		{
+			name:        "Search with empty prefix",
+			sentences:   []string{"hello", "world", "search", "tree"},
+			prefix:      "",
+			expectedRes: []string{"hello", "world", "search", "tree"},
+		},
+		{
+			name:        "Search with common prefix",
+			sentences:   []string{"apple", "app", "apricot", "banana"},
+			prefix:      "app",
+			expectedRes: []string{"apple", "app"},
+		},
 	}
-	return sons
-}
 
-func getNodeSonsName(n *node) []rune {
-	sons := make([]rune, 0)
-	for son := range n.sons {
-		sons = append(sons, son)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			tree := NewTree(tc.sentences)
+			result := tree.Search(tc.prefix)
+			if !compareStringSlices(result, tc.expectedRes) {
+				t.Errorf("Expected %v, but got %v", tc.expectedRes, result)
+			}
+		})
 	}
-	return sons
 }

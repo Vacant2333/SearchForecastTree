@@ -53,7 +53,10 @@ func (t *Tree) Search(prefix string) []string {
 }
 
 func (t *Tree) searchWithCur(prefix string, cur *node) []string {
-	result := []string{prefix}
+	var result []string
+	if cur.value != 0 {
+		result = append(result, prefix)
+	}
 	if cur.getSonCount() == 0 {
 		return result
 	}
