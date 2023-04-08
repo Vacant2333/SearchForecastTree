@@ -29,6 +29,7 @@ func (t *Tree) Insert(sentence string) {
 		// move to next
 		cur = cur.sons[c]
 	}
+	cur.end = true
 }
 
 func (n *node) hasSon(value rune) bool {
@@ -41,7 +42,7 @@ func (n *node) getSonCount() int {
 }
 
 // Search from the tree by this prefix, return results which are matched
-// TODO: count, priority
+// TODO: limit count, priority
 func (t *Tree) Search(prefix string) []string {
 	cur := t.matchForCur(prefix)
 	if cur == nil {
@@ -54,7 +55,7 @@ func (t *Tree) Search(prefix string) []string {
 
 func (t *Tree) searchWithCur(prefix string, cur *node) []string {
 	var result []string
-	if cur.value != 0 {
+	if cur.end {
 		result = append(result, prefix)
 	}
 	if cur.getSonCount() == 0 {
