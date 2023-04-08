@@ -16,7 +16,7 @@ func printNode(n *node) {
 
 func getNodeSons(n *node) []*node {
 	sons := make([]*node, 0)
-	for _, son := range n.sons {
+	for _, son := range n.children {
 		sons = append(sons, son)
 	}
 	return sons
@@ -24,7 +24,7 @@ func getNodeSons(n *node) []*node {
 
 func getNodeSonsName(n *node) []rune {
 	sons := make([]rune, 0)
-	for son := range n.sons {
+	for son := range n.children {
 		sons = append(sons, son)
 	}
 	return sons

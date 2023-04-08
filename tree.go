@@ -4,19 +4,17 @@ func NewTree(sentences []string) *Tree {
 	t := &Tree{
 		root: newNode(0),
 	}
-	if sentences != nil {
-		// insert default sentences
-		for _, sentence := range sentences {
-			t.Insert(sentence)
-		}
+	// insert default sentences
+	for _, sentence := range sentences {
+		t.Insert(sentence)
 	}
 	return t
 }
 
 func newNode(value rune) *node {
 	return &node{
-		value: value,
-		sons:  make(map[rune]*node),
+		value:    value,
+		children: make(map[rune]*node),
 	}
 }
 
@@ -24,21 +22,21 @@ func (t *Tree) Insert(sentence string) {
 	cur := t.root
 	for _, c := range sentence {
 		if !cur.hasSon(c) {
-			cur.sons[c] = newNode(c)
+			cur.children[c] = newNode(c)
 		}
 		// move to next
-		cur = cur.sons[c]
+		cur = cur.children[c]
 	}
 	cur.end = true
 }
 
 func (n *node) hasSon(value rune) bool {
-	_, ok := n.sons[value]
+	_, ok := n.children[value]
 	return ok
 }
 
 func (n *node) getSonCount() int {
-	return len(n.sons)
+	return len(n.children)
 }
 
 // Search from the tree by this prefix, return results which are matched
@@ -61,7 +59,7 @@ func (t *Tree) searchWithCur(prefix string, cur *node) []string {
 	if cur.getSonCount() == 0 {
 		return result
 	}
-	for c, n := range cur.sons {
+	for c, n := range cur.children {
 		result = append(result, t.searchWithCur(prefix+string(c), n)...)
 	}
 	return result
@@ -75,7 +73,7 @@ func (t *Tree) matchForCur(prefix string) *node {
 			// match null
 			return nil
 		}
-		cur = cur.sons[c]
+		cur = cur.children[c]
 	}
 	return cur
 }

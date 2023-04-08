@@ -73,6 +73,12 @@ func TestSearch(t *testing.T) {
 			prefix:      "app",
 			expectedRes: []string{"apple", "app"},
 		},
+		{
+			name:        "Search with chinese",
+			sentences:   []string{"测试123", "测试title", "测t", "banana"},
+			prefix:      "测试",
+			expectedRes: []string{"测试123", "测试title"},
+		},
 	}
 
 	for _, tc := range testCases {
