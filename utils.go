@@ -1,6 +1,12 @@
 package SearchForecastTree
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+	"unsafe"
+)
 
 func printTree(t *Tree) {
 	printNode(t.root)
@@ -53,4 +59,42 @@ func compareStringSlices(a, b []string) bool {
 		}
 	}
 	return true
+}
+
+func GetSentencesFromFile(fileName string) []string {
+	f, err := os.Open(fileName)
+	if err != nil {
+		log.Fatalf("Error opening file: %v", err)
+	}
+	defer f.Close()
+	var result []string
+	// Create a new Scanner to read the file line by line
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		result = append(result, scanner.Text())
+	}
+	return result
+}
+
+func CalculateTreeSize(n *node) uintptr {
+	if n == nil {
+		return 0
+	}
+	// Calculate the memory size of the current node
+	nodeSize := unsafe.Sizeof(*n)
+	// Calculate the memory size of the node's 'sons' map
+	mapSize := unsafe.Sizeof(map[rune]*node{}) + uintptr(len(n.children))*(unsafe.Sizeof(rune(0))+unsafe.Sizeof(&node{}))
+	// Recursively calculate the memory size of each child node in the 'sons' map
+	var childrenSize uintptr
+	for _, child := range n.children {
+		childrenSize += CalculateTreeSize(child)
+	}
+	// Return the total memory size
+	return nodeSize + mapSize + childrenSize
+}
+
+func (t *Tree) MemorySizeMB() float64 {
+	bytes := float64(CalculateTreeSize(t.root))
+	megabytes := bytes / (1024 * 1024)
+	return megabytes
 }
